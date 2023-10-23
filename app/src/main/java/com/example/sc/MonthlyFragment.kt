@@ -60,13 +60,14 @@ class MonthlyFragment : Fragment() {
             monthlySteps?.text = it.toString()
         }
 
-        returnChart()
+       // returnChart()
 
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val bGetMSteps = view.findViewById<Button>(R.id.bCheckMonthlySteps)
         val bSaveMonthlyGoal = view.findViewById<Button>(R.id.bSaveMonthlyGoal)
         val etMonthlyG = view.findViewById<EditText>(R.id.etMonthlyGoalSteps)
         val goal = view.findViewById<TextView>(R.id.tvSavedGoalSteps)
@@ -80,9 +81,13 @@ class MonthlyFragment : Fragment() {
             goalsViewModel.updateMonthly(GoalMonthly(1, monthlyGoal))
            etMonthlyG.text?.clear()
             it.hideKeyboard()
+            returnChart()
             list.clear()
+        }
+        bGetMSteps.setOnClickListener {
             returnChart()
         }
+
     }
 
     fun returnChart(): ArrayList<BarEntry> {
@@ -149,7 +154,7 @@ class MonthlyFragment : Fragment() {
         //barChart.xAxis.setCenterAxisLabels(true)
         barChart.xAxis.setDrawLabels(true)
 
-        list.clear()
+       // list.clear()
         return list
     }
     fun View.hideKeyboard() {

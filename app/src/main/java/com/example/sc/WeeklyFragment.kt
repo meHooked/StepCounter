@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -56,20 +57,16 @@ class WeeklyFragment : Fragment() {
             .observe(viewLifecycleOwner) { WeeklyFitness ->
                 val summedWeekly = WeeklyFitness.weeklyStepsMade.sumOf { it.dailyStepsMade }
                 textViewSteps.text = WeeklyFitness.weeklyStepsMade.toString()
-
-                //  Toast.makeText(context, text, duration).show()
-
                 textViewSteps.text = summedWeekly.toString()
             }
 
 
         weeklyGoal = rootView.findViewById(R.id.tvSavedGoalSteps)
-        // val weeklySteps: TextView? = view?.findViewById(R.id.tvSavedGoalSteps)
         goalsViewModel.getWeekly().observe(this) {
             weeklyGoal?.text = it.toString()
         }
 
-        returnChart()
+       // returnChart()
 
         return rootView
 
@@ -77,9 +74,10 @@ class WeeklyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val bGetWSteps  =view.findViewById<Button>(R.id.bCheckWeeklySteps)
         val bSaveWeeklyGoal = view.findViewById<Button>(R.id.bSaveWeeklyGoal)
         val etWeeklyG = view.findViewById<EditText>(R.id.etWeeklyGoalSteps)
-        val goal = view.findViewById<TextView>(R.id.tvSavedGoalSteps)
+        //val goal = view.findViewById<TextView>(R.id.tvSavedGoalSteps)
 
 
 
@@ -88,8 +86,12 @@ class WeeklyFragment : Fragment() {
             goalsViewModel.updateWeekly(GoalWeekly(1, weeklyGoal))
             etWeeklyG.text.clear()
             it.hideKeyboard()
-            list.clear()
             returnChart()
+            list.clear()
+        }
+        bGetWSteps.setOnClickListener {
+            returnChart()
+            //list.clear()
         }
 
 
@@ -155,11 +157,12 @@ class WeeklyFragment : Fragment() {
         val xAxisLabels = listOf("", "Goals", "Steps")
         barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels)
 
-        //barChart.xAxis.setCenterAxisLabels(true)
+
         barChart.xAxis.setDrawLabels(true)
 
-        list.clear()
+        //list.clear()
         return list
+
     }
     fun View.hideKeyboard() {
         val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

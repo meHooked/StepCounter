@@ -38,7 +38,6 @@ class DailyFragment : Fragment() {
     private lateinit var list: ArrayList<BarEntry>
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,10 +45,7 @@ class DailyFragment : Fragment() {
 
         val rootView =
             inflater.inflate(R.layout.fragment_daily, container, false)//inflates fragment
-        //requireContext()
 
-
-        // val dailySteps: TextView? = rootView.findViewById(R.id.tvSavedGoalSteps)
         barChart = rootView.findViewById(R.id.idBarChart)
 
         textViewSteps = rootView.findViewById(R.id.sample_logview)
@@ -64,19 +60,16 @@ class DailyFragment : Fragment() {
             goal.text = it.toString()
         }
 
-        returnChart()
-
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // val bShowDailySteps = view.findViewById<Button>(R.id.bCheckDailySteps)
+        val bGetDSteps = view.findViewById<Button>(R.id.bCheckDailySteps)
         val bSaveGoal = view.findViewById<Button>(R.id.bSaveDailyGoal)
         val etDailyG = view.findViewById<EditText>(R.id.etDailyGoalSteps)
         // val goal = view.findViewById<TextView>(R.id.tvSavedGoalSteps)
-        //  val stepsTakenD = view.findViewById<TextView>(R.id.sample_logview)
+        // val stepsTakenD = view.findViewById<TextView>(R.id.sample_logview)
 
 
         bSaveGoal.setOnClickListener {//saves entered daily goal to database
@@ -84,10 +77,12 @@ class DailyFragment : Fragment() {
             goalsViewModel.updateDaily(GoalDaily(1, dailyGoal))
             etDailyG.text?.clear()
             it.hideKeyboard()
-            list.clear()
             returnChart()
+            list.clear()
+        }
 
-
+        bGetDSteps.setOnClickListener {
+            returnChart()
         }
 
 
@@ -154,14 +149,13 @@ class DailyFragment : Fragment() {
 
         barChart.xAxis.setDrawLabels(true)
 
-
-
-        list.clear()
         return list
 
     }
-    fun View.hideKeyboard() {
-        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+    fun View.hideKeyboard() { //hides keyboard
+        val inputManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 

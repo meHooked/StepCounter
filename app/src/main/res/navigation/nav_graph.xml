@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@layout/fragment_start">
+
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="com.example.sc.StartFragment"
+        android:label="daily"
+        tools:layout="@layout/fragment_start">
+        <action
+            android:id="@+id/action_startFragment_to_dailyFragment"
+            app:destination="@id/dailyFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_weeklyFragment"
+            app:destination="@id/weeklyFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_monthlyFragment"
+            app:destination="@id/monthlyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dailyFragment"
+        android:name="com.example.sc.DailyFragment"
+        tools:layout="@layout/fragment_daily"
+        />
+
+    <fragment
+        android:id="@+id/weeklyFragment"
+        android:name="com.example.sc.WeeklyFragment"
+        android:label="WeeklyFragment"
+        tools:layout="@layout/fragment_weekly"/>
+    <fragment
+        android:id="@+id/monthlyFragment"
+        android:name="com.example.sc.MonthlyFragment"
+        android:label="MonthlyFragment"
+        tools:layout="@layout/fragment_monthly"/>
+
+</navigation>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".WeeklyFragment">
+
+    <data>
+
+        <variable
+            name="weeklyFragment"
+            type="com.example.sc.WeeklyFragment" />
+
+        <variable
+            name="myViewModel"
+            type="com.example.sc.GoalsViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:text="Weekly steps"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textColor="@color/material_on_background_emphasis_medium"/>
+
+    <EditText
+        android:id="@+id/etWeeklyGoalSteps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter weekly goal"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@id/subtitle" />
+
+    <TextView
+        android:id="@+id/sample_logview2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etWeeklyGoalSteps"
+        android:background="@color/design_default_color_secondary_variant"/>
+
+    <Button
+        android:id="@+id/bCheckWeeklySteps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Weekly steps"
+        app:layout_constraintEnd_toStartOf="@+id/bSaveWeeklyGoal"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sample_logview2" />
+
+    <Button
+        android:id="@+id/bSaveWeeklyGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save goal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/bCheckWeeklySteps"
+        app:layout_constraintTop_toBottomOf="@id/sample_logview2" />
+
+    <TextView
+        android:id="@+id/tvSavedGoalSteps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bCheckWeeklySteps"
+        android:background="@color/design_default_color_secondary"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:textSize="24sp"/>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/idBarChartWeekly"
+        android:layout_width="match_parent"
+        android:layout_height="530dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSavedGoalSteps"
+
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

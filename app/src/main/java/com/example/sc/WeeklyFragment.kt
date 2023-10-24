@@ -44,10 +44,6 @@ class WeeklyFragment : Fragment() {
 
         // Inflates the custom fragment layout
         val rootView = inflater.inflate(R.layout.fragment_weekly, container, false)
-        requireContext()
-
-
-
 
         barChart = rootView.findViewById(R.id.idBarChartWeekly)
 
@@ -56,17 +52,16 @@ class WeeklyFragment : Fragment() {
         gfViewModel.getWeeklyFitnessData(rootView.context)
             .observe(viewLifecycleOwner) { WeeklyFitness ->
                 val summedWeekly = WeeklyFitness.weeklyStepsMade.sumOf { it.dailyStepsMade }
-                textViewSteps.text = WeeklyFitness.weeklyStepsMade.toString()
-                textViewSteps.text = summedWeekly.toString()
+                val ws = getString(R.string.steps_weekly)
+                textViewSteps.text = String.format(ws, summedWeekly)
             }
 
 
         weeklyGoal = rootView.findViewById(R.id.tvSavedGoalSteps)
         goalsViewModel.getWeekly().observe(this) {
-            weeklyGoal?.text = it.toString()
+            val wg = getString(R.string.goal_weekly)
+            weeklyGoal.text = String.format(wg, it.toString())
         }
-
-       // returnChart()
 
         return rootView
 
@@ -82,16 +77,29 @@ class WeeklyFragment : Fragment() {
 
 
         bSaveWeeklyGoal.setOnClickListener {
-            val weeklyGoal = etWeeklyG.text.toString().toInt()
-            goalsViewModel.updateWeekly(GoalWeekly(1, weeklyGoal))
-            etWeeklyG.text.clear()
-            it.hideKeyboard()
-            returnChart()
-            list.clear()
+            if (etWeeklyG.length() == 0){
+                etWeeklyG.error = "You need to enter weekly goal"
+            } else {
+                val weeklyGoal = etWeeklyG.text.toString().toInt()
+                goalsViewModel.updateWeekly(GoalWeekly(1, weeklyGoal))
+                etWeeklyG.text.clear()
+                it.hideKeyboard()
+                barChart.notifyDataSetChanged()
+                returnChart()
+                list.clear()
+            }
         }
+
         bGetWSteps.setOnClickListener {
+            gfViewModel.getWeeklyFitnessData(view.context)
+                .observe(viewLifecycleOwner) { WeeklyFitness ->
+                    val summedWeekly = WeeklyFitness.weeklyStepsMade.sumOf { it.dailyStepsMade }
+                    val ws = getString(R.string.steps_weekly)
+                    textViewSteps.text = String.format(ws, summedWeekly)
+                }
+
             returnChart()
-            //list.clear()
+
         }
 
 

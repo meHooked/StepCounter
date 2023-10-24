@@ -33,6 +33,7 @@ class DailyFragment : Fragment() {
     private val goalsViewModel: GoalsViewModel by viewModels()
     private val gfViewModel: GFViewModel by viewModels()
     private lateinit var textViewSteps: TextView
+    private lateinit var results: TextView
     private lateinit var goal: TextView
     lateinit var barChart: BarChart
     private lateinit var list: ArrayList<BarEntry>
@@ -48,16 +49,18 @@ class DailyFragment : Fragment() {
 
         barChart = rootView.findViewById(R.id.idBarChart)
 
+
         textViewSteps = rootView.findViewById(R.id.sample_logview)
         gfViewModel.getDailyFitnessData(rootView.context)//gets dailysteps from GoogleFit, sets them to textview
             .observe(viewLifecycleOwner) { DailyFitness ->
-                textViewSteps.text = DailyFitness.dailyStepsMade.toString()
-
+                val ds = getString(R.string.steps_daily)
+                textViewSteps.text = String.format(ds,DailyFitness.dailyStepsMade.toString() )//DailyFitness.dailyStepsMade.toString()
             }
 
         goal = rootView.findViewById<TextView>(R.id.tvSavedGoalSteps)
         goalsViewModel.getDaily().observe(this) {//gets daily goal from database,sets it to textview
-            goal.text = it.toString()
+            val dg = getString(R.string.goal_daily)
+            goal.text = String.format(dg, it.toString())//it.toString()
         }
 
         return rootView
@@ -73,15 +76,27 @@ class DailyFragment : Fragment() {
 
 
         bSaveGoal.setOnClickListener {//saves entered daily goal to database
-            val dailyGoal = etDailyG.text.toString().toInt()
-            goalsViewModel.updateDaily(GoalDaily(1, dailyGoal))
-            etDailyG.text?.clear()
-            it.hideKeyboard()
-            returnChart()
-            list.clear()
+            if (etDailyG.length() == 0 ) {
+                etDailyG.error = "You need to enter daily goal"
+            } else {
+                val dailyGoal = etDailyG.text.toString().toInt()
+                goalsViewModel.updateDaily(GoalDaily(1, dailyGoal))
+                etDailyG.text?.clear()
+                it.hideKeyboard()
+                barChart.notifyDataSetChanged()
+                returnChart()
+                list.clear()
+            }
         }
 
+
         bGetDSteps.setOnClickListener {
+            gfViewModel.getDailyFitnessData(view.context)//gets dailysteps from GoogleFit, sets them to textview
+                .observe(viewLifecycleOwner) { DailyFitness ->
+                    val ds = getString(R.string.steps_daily)
+                    textViewSteps.text = String.format(ds,DailyFitness.dailyStepsMade.toString())
+                }
+
             returnChart()
         }
 

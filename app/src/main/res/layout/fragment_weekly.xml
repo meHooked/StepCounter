@@ -52,7 +52,8 @@
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bSaveWeeklyGoal"
-        android:background="@color/design_default_color_secondary_variant"/>
+        android:background="@color/design_default_color_secondary_variant"
+        android:text="@string/steps_weekly"/>
 
     <Button
         android:id="@+id/bCheckWeeklySteps"
@@ -83,7 +84,8 @@
         android:background="@color/design_default_color_secondary"
         android:textAlignment="center"
         android:textStyle="bold"
-        android:textSize="24sp"/>
+        android:textSize="24sp"
+        android:text="@string/goal_weekly"/>
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/idBarChartWeekly"

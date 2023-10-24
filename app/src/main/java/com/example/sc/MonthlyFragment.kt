@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.sc.databinding.FragmentMonthlyBinding
 import com.example.sc.model.GoalMonthly
+import com.example.sc.model.GoalWeekly
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -31,6 +32,7 @@ class MonthlyFragment : Fragment() {
     private var binding: FragmentMonthlyBinding? = null
     private val goalsViewModel: GoalsViewModel by activityViewModels()
     private val gfViewModel: GFViewModel by viewModels()
+private lateinit var monthlySteps: TextView
     private lateinit var textViewSteps: TextView
     lateinit var barChart: BarChart
     private lateinit var list: ArrayList<BarEntry>
@@ -44,7 +46,7 @@ class MonthlyFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_monthly, container, false)
         //requireContext()
 
-        val monthlySteps: TextView? = view?.findViewById(R.id.tvSavedGoalSteps)
+
 
         barChart = rootView.findViewById(R.id.idBarChartMonthly)
 
@@ -53,11 +55,15 @@ class MonthlyFragment : Fragment() {
         gfViewModel.getMonthlyFitnessData(rootView.context)
             .observe(viewLifecycleOwner, Observer { MonthlyFitness ->
                 val summedMonthly = MonthlyFitness.monthlyStepsMade.sumOf { it.dailyStepsMade }
-                textViewSteps.text = summedMonthly.toString()
+                val ms = getString(R.string.steps_monthly)
+                textViewSteps.text = String.format(ms, summedMonthly)
             })
 
-        goalsViewModel.getMonthly().observe(this) {
-            monthlySteps?.text = it.toString()
+        monthlySteps = rootView.findViewById(R.id.tvSavedGoalSteps)
+       goalsViewModel.getMonthly().observe(this) {
+            val mg = getString(R.string.goal_monthly)
+            monthlySteps?.text = String.format(mg, it.toString())
+           // monthlySteps?.text = it.toString()
         }
 
        // returnChart()
@@ -72,17 +78,23 @@ class MonthlyFragment : Fragment() {
         val etMonthlyG = view.findViewById<EditText>(R.id.etMonthlyGoalSteps)
         val goal = view.findViewById<TextView>(R.id.tvSavedGoalSteps)
 
-        goalsViewModel.getMonthly().observe(this) {
-            goal.text = it.toString()
-        }
+
 
         bSaveMonthlyGoal.setOnClickListener {
-            val monthlyGoal = etMonthlyG.text.toString().toInt()
-            goalsViewModel.updateMonthly(GoalMonthly(1, monthlyGoal))
-           etMonthlyG.text?.clear()
-            it.hideKeyboard()
-            returnChart()
-            list.clear()
+            if (etMonthlyG.length() == 0){
+                etMonthlyG.error = "You need to enter monthly goal"
+            } else {
+                val monthlyGoal = etMonthlyG.text.toString().toInt()
+                goalsViewModel.updateMonthly(GoalMonthly(1, monthlyGoal))
+                etMonthlyG.text?.clear()
+                it.hideKeyboard()
+                barChart.notifyDataSetChanged()
+                returnChart()
+                list.clear()
+            }
+
+
+
         }
         bGetMSteps.setOnClickListener {
             returnChart()

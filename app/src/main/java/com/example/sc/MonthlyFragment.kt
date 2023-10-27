@@ -26,6 +26,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
+import kotlin.math.roundToInt
 
 class MonthlyFragment : Fragment() {
 
@@ -33,6 +34,7 @@ class MonthlyFragment : Fragment() {
     private val goalsViewModel: GoalsViewModel by activityViewModels()
     private val gfViewModel: GFViewModel by viewModels()
 private lateinit var monthlySteps: TextView
+    private lateinit var tvMonthlyAverage: TextView
     private lateinit var textViewSteps: TextView
     lateinit var barChart: BarChart
     private lateinit var list: ArrayList<BarEntry>
@@ -42,14 +44,11 @@ private lateinit var monthlySteps: TextView
         savedInstanceState: Bundle?
     ): View {
 
-        // Inflates the custom fragment layout
+
         val rootView = inflater.inflate(R.layout.fragment_monthly, container, false)
-        //requireContext()
-
-
 
         barChart = rootView.findViewById(R.id.idBarChartMonthly)
-
+tvMonthlyAverage = rootView.findViewById(R.id.tvMonthlyAverage)
         textViewSteps = rootView.findViewById(R.id.sample_logview3)
 
         gfViewModel.getMonthlyFitnessData(rootView.context)
@@ -57,16 +56,20 @@ private lateinit var monthlySteps: TextView
                 val summedMonthly = MonthlyFitness.monthlyStepsMade.sumOf { it.dailyStepsMade }
                 val ms = getString(R.string.steps_monthly)
                 textViewSteps.text = String.format(ms, summedMonthly)
+                val averageMonthly = summedMonthly/30.00
+                val avgMRound = (averageMonthly * 100.0).roundToInt() / 100.0
+                val wa = getString(R.string.avg_monthly)
+                tvMonthlyAverage.text = String.format(wa, avgMRound)
             })
 
         monthlySteps = rootView.findViewById(R.id.tvSavedGoalSteps)
        goalsViewModel.getMonthly().observe(this) {
             val mg = getString(R.string.goal_monthly)
             monthlySteps?.text = String.format(mg, it.toString())
-           // monthlySteps?.text = it.toString()
+
+
         }
 
-       // returnChart()
 
         return rootView
     }
@@ -97,6 +100,16 @@ private lateinit var monthlySteps: TextView
 
         }
         bGetMSteps.setOnClickListener {
+            gfViewModel.getMonthlyFitnessData(view.context)
+                .observe(viewLifecycleOwner, Observer { MonthlyFitness ->
+                    val summedMonthly = MonthlyFitness.monthlyStepsMade.sumOf { it.dailyStepsMade }
+                    val ms = getString(R.string.steps_monthly)
+                    textViewSteps.text = String.format(ms, summedMonthly)
+                    val averageMonthly = summedMonthly/30.00
+                    val avgMRound = (averageMonthly * 100.0).roundToInt() / 100.0
+                    val wa = getString(R.string.avg_monthly)
+                    tvMonthlyAverage.text = String.format(wa, avgMRound)
+                })
             returnChart()
         }
 
@@ -109,7 +122,7 @@ private lateinit var monthlySteps: TextView
         goalsViewModel.getMonthly().observe(this) {
             var yGoalW = it.toFloat()
             list.add(BarEntry(1f, yGoalW))
-            barChart.animateY(0)
+            barChart.animateY(1000)
         }
 
 
@@ -138,8 +151,6 @@ private lateinit var monthlySteps: TextView
                     barChart.description.text = "Monthly goal/steps"
                     barChart.description.textSize = 12f
                     barChart.description.yOffset = 500f
-
-
 
 
                     barData.setValueFormatter(object : ValueFormatter() {

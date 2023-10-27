@@ -25,6 +25,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
+import kotlin.math.roundToInt
 
 class WeeklyFragment : Fragment() {
 
@@ -32,7 +33,7 @@ class WeeklyFragment : Fragment() {
     private val goalsViewModel: GoalsViewModel by viewModels()
     private val gfViewModel: GFViewModel by viewModels()
     private lateinit var weeklyGoal: TextView
-
+private lateinit var tvWeeklyAverage: TextView
     private lateinit var textViewSteps: TextView
     lateinit var barChart: BarChart
     private lateinit var list: ArrayList<BarEntry>
@@ -42,18 +43,25 @@ class WeeklyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        // Inflates the custom fragment layout
+
         val rootView = inflater.inflate(R.layout.fragment_weekly, container, false)
 
         barChart = rootView.findViewById(R.id.idBarChartWeekly)
 
         textViewSteps = rootView.findViewById(R.id.sample_logview2)
+        tvWeeklyAverage = rootView.findViewById(R.id.tvWeeklyAverage)
 
         gfViewModel.getWeeklyFitnessData(rootView.context)
             .observe(viewLifecycleOwner) { WeeklyFitness ->
                 val summedWeekly = WeeklyFitness.weeklyStepsMade.sumOf { it.dailyStepsMade }
                 val ws = getString(R.string.steps_weekly)
                 textViewSteps.text = String.format(ws, summedWeekly)
+                val averageWeekly = summedWeekly/7.00
+                val avgWRound = (averageWeekly * 100.0).roundToInt() / 100.0
+                val wa = getString(R.string.avg_weekly)
+                tvWeeklyAverage.text = String.format(wa, avgWRound)
+
+
             }
 
 
@@ -72,7 +80,7 @@ class WeeklyFragment : Fragment() {
         val bGetWSteps  =view.findViewById<Button>(R.id.bCheckWeeklySteps)
         val bSaveWeeklyGoal = view.findViewById<Button>(R.id.bSaveWeeklyGoal)
         val etWeeklyG = view.findViewById<EditText>(R.id.etWeeklyGoalSteps)
-        //val goal = view.findViewById<TextView>(R.id.tvSavedGoalSteps)
+
 
 
 
@@ -96,6 +104,10 @@ class WeeklyFragment : Fragment() {
                     val summedWeekly = WeeklyFitness.weeklyStepsMade.sumOf { it.dailyStepsMade }
                     val ws = getString(R.string.steps_weekly)
                     textViewSteps.text = String.format(ws, summedWeekly)
+                    val averageWeekly = summedWeekly/7.00
+                    val avgWRound = (averageWeekly * 100.0).roundToInt() / 100.0
+                    val wa = getString(R.string.avg_weekly)
+                    tvWeeklyAverage.text = String.format(wa, avgWRound)
                 }
 
             returnChart()

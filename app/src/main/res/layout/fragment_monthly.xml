@@ -2,17 +2,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MonthlyFragment">
+    tools:context=".ui.MonthlyFragment">
 
     <data>
 
         <variable
             name="monthlyFragment"
-            type="com.example.sc.MonthlyFragment" />
+            type="com.example.sc.ui.MonthlyFragment" />
 
         <variable
             name="myViewModel"
-            type="com.example.sc.GoalsViewModel" />
+            type="com.example.sc.viewModel.GoalsViewModel" />
     </data>
 
     <ScrollView

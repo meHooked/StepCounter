@@ -1,9 +1,8 @@
-package com.example.sc
+package com.example.sc.repository
 
 import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.sc.model.*
 
 class GoalsRepository(application: Application) {

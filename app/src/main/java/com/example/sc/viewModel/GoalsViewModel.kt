@@ -1,9 +1,9 @@
-package com.example.sc
+package com.example.sc.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.example.sc.GoalsRepository
+import com.example.sc.repository.GoalsRepository
 import com.example.sc.model.*
 
 

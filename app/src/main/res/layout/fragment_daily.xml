@@ -2,17 +2,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".DailyFragment">
+    tools:context=".ui.DailyFragment">
 
     <data>
 
         <variable
             name="dailyFragment"
-            type="com.example.sc.DailyFragment" />
+            type="com.example.sc.ui.DailyFragment" />
 
         <variable
             name="myViewModel"
-            type="com.example.sc.GoalsViewModel" />
+            type="com.example.sc.viewModel.GoalsViewModel" />
     </data>
 <ScrollView
     android:layout_width="match_parent"
@@ -78,7 +78,7 @@
             android:textSize="18sp"
             android:layout_marginStart="48dp"
             android:layout_marginEnd="48dp"
-            android:text="@string/steps_daily"/>
+           android:text="@string/steps_daily"/>
 
         <TextView
             android:id="@+id/tvSavedGoalSteps"

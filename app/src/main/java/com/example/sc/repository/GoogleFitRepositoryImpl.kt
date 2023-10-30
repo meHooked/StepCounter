@@ -1,4 +1,4 @@
-package com.example.sc
+package com.example.sc.repository
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData

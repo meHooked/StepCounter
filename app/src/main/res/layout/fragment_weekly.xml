@@ -3,17 +3,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".WeeklyFragment">
+    tools:context=".ui.WeeklyFragment">
 
     <data>
 
         <variable
             name="weeklyFragment"
-            type="com.example.sc.WeeklyFragment" />
+            type="com.example.sc.ui.WeeklyFragment" />
 
         <variable
             name="myViewModel"
-            type="com.example.sc.GoalsViewModel" />
+            type="com.example.sc.viewModel.GoalsViewModel" />
     </data>
 
     <ScrollView

@@ -1,4 +1,4 @@
-package com.example.sc
+package com.example.sc.ui
 
 import android.content.Context
 import android.content.res.Configuration
@@ -8,16 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.example.sc.R
 import com.example.sc.databinding.FragmentWeeklyBinding
 import com.example.sc.model.GoalWeekly
-import com.github.mikephil.charting.charts.BarChart
+import com.example.sc.viewModel.GFViewModel
+import com.example.sc.viewModel.GoalsViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -29,13 +27,9 @@ import kotlin.math.roundToInt
 
 class WeeklyFragment : Fragment() {
 
-    private var binding: FragmentWeeklyBinding? = null
+    private lateinit var binding: FragmentWeeklyBinding
     private val goalsViewModel: GoalsViewModel by viewModels()
     private val gfViewModel: GFViewModel by viewModels()
-    private lateinit var weeklyGoal: TextView
-private lateinit var tvWeeklyAverage: TextView
-    private lateinit var textViewSteps: TextView
-    lateinit var barChart: BarChart
     private lateinit var list: ArrayList<BarEntry>
 
     override fun onCreateView(
@@ -43,71 +37,55 @@ private lateinit var tvWeeklyAverage: TextView
         savedInstanceState: Bundle?
     ): View {
 
+        binding = FragmentWeeklyBinding.inflate(inflater, container, false)
 
-        val rootView = inflater.inflate(R.layout.fragment_weekly, container, false)
-
-        barChart = rootView.findViewById(R.id.idBarChartWeekly)
-
-        textViewSteps = rootView.findViewById(R.id.sample_logview2)
-        tvWeeklyAverage = rootView.findViewById(R.id.tvWeeklyAverage)
-
-        gfViewModel.getWeeklyFitnessData(rootView.context)
+        gfViewModel.getWeeklyFitnessData(binding.root.context)
             .observe(viewLifecycleOwner) { WeeklyFitness ->
                 val summedWeekly = WeeklyFitness.weeklyStepsMade.sumOf { it.dailyStepsMade }
                 val ws = getString(R.string.steps_weekly)
-                textViewSteps.text = String.format(ws, summedWeekly)
+                binding.sampleLogview2.text = String.format(ws, summedWeekly)
                 val averageWeekly = summedWeekly/7.00
                 val avgWRound = (averageWeekly * 100.0).roundToInt() / 100.0
                 val wa = getString(R.string.avg_weekly)
-                tvWeeklyAverage.text = String.format(wa, avgWRound)
-
-
+                binding.tvWeeklyAverage.text = String.format(wa, avgWRound)
             }
 
-
-        weeklyGoal = rootView.findViewById(R.id.tvSavedGoalSteps)
         goalsViewModel.getWeekly().observe(this) {
             val wg = getString(R.string.goal_weekly)
-            weeklyGoal.text = String.format(wg, it.toString())
+            binding.tvSavedGoalSteps.text = String.format(wg, it.toString())
         }
 
-        return rootView
+        return binding.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val bGetWSteps  =view.findViewById<Button>(R.id.bCheckWeeklySteps)
-        val bSaveWeeklyGoal = view.findViewById<Button>(R.id.bSaveWeeklyGoal)
-        val etWeeklyG = view.findViewById<EditText>(R.id.etWeeklyGoalSteps)
 
-
-
-
-        bSaveWeeklyGoal.setOnClickListener {
-            if (etWeeklyG.length() == 0){
-                etWeeklyG.error = "You need to enter weekly goal"
+        binding.bSaveWeeklyGoal.setOnClickListener {
+            if (binding.etWeeklyGoalSteps.length() == 0){
+                binding.etWeeklyGoalSteps.error = "You need to enter weekly goal"
             } else {
-                val weeklyGoal = etWeeklyG.text.toString().toInt()
+                val weeklyGoal = binding.etWeeklyGoalSteps.text.toString().toInt()
                 goalsViewModel.updateWeekly(GoalWeekly(1, weeklyGoal))
-                etWeeklyG.text.clear()
+                binding.etWeeklyGoalSteps.text.clear()
                 it.hideKeyboard()
-                barChart.notifyDataSetChanged()
-                returnChart()
-                list.clear()
             }
+            returnChart()
+            list.clear()
         }
 
-        bGetWSteps.setOnClickListener {
+        binding.bCheckWeeklySteps.setOnClickListener {
             gfViewModel.getWeeklyFitnessData(view.context)
                 .observe(viewLifecycleOwner) { WeeklyFitness ->
                     val summedWeekly = WeeklyFitness.weeklyStepsMade.sumOf { it.dailyStepsMade }
                     val ws = getString(R.string.steps_weekly)
-                    textViewSteps.text = String.format(ws, summedWeekly)
+                    binding.sampleLogview2.text = String.format(ws, summedWeekly)
                     val averageWeekly = summedWeekly/7.00
                     val avgWRound = (averageWeekly * 100.0).roundToInt() / 100.0
                     val wa = getString(R.string.avg_weekly)
-                    tvWeeklyAverage.text = String.format(wa, avgWRound)
+                    binding.tvWeeklyAverage.text = String.format(wa, avgWRound)
+                    it.hideKeyboard()
                 }
 
             returnChart()
@@ -119,13 +97,11 @@ private lateinit var tvWeeklyAverage: TextView
 
     fun returnChart(): ArrayList<BarEntry> {
 
-        // var
         list = ArrayList()
 
         goalsViewModel.getWeekly().observe(this) {
             var yGoalW = it.toFloat()
             list.add(BarEntry(1f, yGoalW))
-            barChart.animateY(0)
         }
 
         this.context?.let {
@@ -140,20 +116,19 @@ private lateinit var tvWeeklyAverage: TextView
                     dataSet.valueTextColor = Color.BLACK
                     dataSet.valueTextSize = 12f
 
-                    //if dark mode is on, changes text color in chart
                     if (isDarkModeOn()){
                         dataSet.valueTextColor = Color.WHITE
-                        barChart.description.textColor = Color.WHITE
-                        barChart.xAxis.textColor = Color.WHITE
-                        barChart.axisLeft.textColor = Color.WHITE
+                        binding.idBarChartWeekly.description.textColor = Color.WHITE
+                        binding.idBarChartWeekly.xAxis.textColor = Color.WHITE
+                        binding.idBarChartWeekly.axisLeft.textColor = Color.WHITE
                     }
 
                     val barData = BarData(dataSet)
-                    barChart.setFitBars(true)
-                    barChart.data = barData
-                    barChart.description.text = "Weekly goal/steps"
-                    barChart.description.textSize = 12f
-                    barChart.description.yOffset = 500f
+                    binding.idBarChartWeekly.setFitBars(true)
+                    binding.idBarChartWeekly.data = barData
+                    binding.idBarChartWeekly.description.text = "Weekly goal/steps"
+                    binding.idBarChartWeekly.description.textSize = 12f
+                    binding.idBarChartWeekly.description.yOffset = 500f
 
                     barData.setValueFormatter(object : ValueFormatter() {
                         override fun getFormattedValue(value: Float): String {
@@ -161,26 +136,26 @@ private lateinit var tvWeeklyAverage: TextView
                         }
                     })
 
-                    barChart.data.notifyDataChanged()
-                    barChart.notifyDataSetChanged()
-                    barChart.animateY(1000)
-                    barChart.legend.isEnabled = false
+                    binding.idBarChartWeekly.data.notifyDataChanged()
+                    binding.idBarChartWeekly.notifyDataSetChanged()
+                    binding.idBarChartWeekly.animateY(1000)
+                    binding.idBarChartWeekly.legend.isEnabled = false
                 })
         }
 
-        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        barChart.axisLeft.axisMinimum = 0f
-        barChart.axisRight.isEnabled = false
-        barChart.axisRight.setDrawGridLines(false)
+        binding.idBarChartWeekly.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        binding.idBarChartWeekly.axisLeft.axisMinimum = 0f
+        binding.idBarChartWeekly.axisRight.isEnabled = false
+        binding.idBarChartWeekly.axisRight.setDrawGridLines(false)
 
 
         val xAxisLabels = listOf("", "Goals", "Steps")
-        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels)
+        binding.idBarChartWeekly.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels)
 
 
-        barChart.xAxis.setDrawLabels(true)
+        binding.idBarChartWeekly.xAxis.setDrawLabels(true)
 
-        //list.clear()
+
         return list
 
     }

@@ -1,4 +1,4 @@
-package com.example.sc
+package com.example.sc.viewModel
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.example.sc.model.GoogleFitDaily
 import com.example.sc.model.GoogleFitMonthly
 import com.example.sc.model.GoogleFitWeekly
+import com.example.sc.repository.GoogleFitRepository
+import com.example.sc.repository.GoogleFitRepositoryImpl
 
 class GFViewModel: ViewModel() {
     val gfRepository: GoogleFitRepository = GoogleFitRepositoryImpl()

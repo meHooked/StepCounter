@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/startFragment"
-        android:name="com.example.sc.StartFragment"
+        android:name="com.example.sc.ui.StartFragment"
         android:label="daily"
         tools:layout="@layout/fragment_start">
         <action
@@ -22,18 +22,18 @@
     </fragment>
     <fragment
         android:id="@+id/dailyFragment"
-        android:name="com.example.sc.DailyFragment"
+        android:name="com.example.sc.ui.DailyFragment"
         tools:layout="@layout/fragment_daily"
         />
 
     <fragment
         android:id="@+id/weeklyFragment"
-        android:name="com.example.sc.WeeklyFragment"
+        android:name="com.example.sc.ui.WeeklyFragment"
         android:label="WeeklyFragment"
         tools:layout="@layout/fragment_weekly"/>
     <fragment
         android:id="@+id/monthlyFragment"
-        android:name="com.example.sc.MonthlyFragment"
+        android:name="com.example.sc.ui.MonthlyFragment"
         android:label="MonthlyFragment"
         tools:layout="@layout/fragment_monthly"/>
 

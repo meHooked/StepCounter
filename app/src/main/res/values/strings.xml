@@ -8,6 +8,7 @@
 
     <string name="steps_daily">Steps today: %s</string>
     <string name="goal_daily">Daily goal: %s</string>
+    <string name="test">TEST</string>
 
     <string name="steps_weekly">Steps this week: %s</string>
     <string name="goal_weekly">Weekly goal: %s</string>

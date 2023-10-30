@@ -1,4 +1,4 @@
-package com.example.sc
+package com.example.sc.ui
 
 import android.content.Context
 import android.content.res.Configuration
@@ -8,17 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.example.sc.R
 import com.example.sc.databinding.FragmentMonthlyBinding
 import com.example.sc.model.GoalMonthly
-import com.example.sc.model.GoalWeekly
-import com.github.mikephil.charting.charts.BarChart
+import com.example.sc.viewModel.GFViewModel
+import com.example.sc.viewModel.GoalsViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -30,86 +28,68 @@ import kotlin.math.roundToInt
 
 class MonthlyFragment : Fragment() {
 
-    private var binding: FragmentMonthlyBinding? = null
+    private lateinit var binding: FragmentMonthlyBinding
     private val goalsViewModel: GoalsViewModel by activityViewModels()
     private val gfViewModel: GFViewModel by viewModels()
-private lateinit var monthlySteps: TextView
-    private lateinit var tvMonthlyAverage: TextView
-    private lateinit var textViewSteps: TextView
-    lateinit var barChart: BarChart
+
     private lateinit var list: ArrayList<BarEntry>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        binding = FragmentMonthlyBinding.inflate(inflater, container, false)
 
-
-        val rootView = inflater.inflate(R.layout.fragment_monthly, container, false)
-
-        barChart = rootView.findViewById(R.id.idBarChartMonthly)
-tvMonthlyAverage = rootView.findViewById(R.id.tvMonthlyAverage)
-        textViewSteps = rootView.findViewById(R.id.sample_logview3)
-
-        gfViewModel.getMonthlyFitnessData(rootView.context)
+        gfViewModel.getMonthlyFitnessData(binding.root.context)
             .observe(viewLifecycleOwner, Observer { MonthlyFitness ->
                 val summedMonthly = MonthlyFitness.monthlyStepsMade.sumOf { it.dailyStepsMade }
                 val ms = getString(R.string.steps_monthly)
-                textViewSteps.text = String.format(ms, summedMonthly)
-                val averageMonthly = summedMonthly/30.00
+                binding.sampleLogview3.text = String.format(ms, summedMonthly)
+                val averageMonthly = summedMonthly / 30.00
                 val avgMRound = (averageMonthly * 100.0).roundToInt() / 100.0
                 val wa = getString(R.string.avg_monthly)
-                tvMonthlyAverage.text = String.format(wa, avgMRound)
+                binding.tvMonthlyAverage.text = String.format(wa, avgMRound)
             })
 
-        monthlySteps = rootView.findViewById(R.id.tvSavedGoalSteps)
-       goalsViewModel.getMonthly().observe(this) {
+        goalsViewModel.getMonthly().observe(this) {
             val mg = getString(R.string.goal_monthly)
-            monthlySteps?.text = String.format(mg, it.toString())
-
-
+            binding.tvSavedGoalSteps?.text = String.format(mg, it.toString())
         }
 
+        return binding.root
 
-        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val bGetMSteps = view.findViewById<Button>(R.id.bCheckMonthlySteps)
-        val bSaveMonthlyGoal = view.findViewById<Button>(R.id.bSaveMonthlyGoal)
-        val etMonthlyG = view.findViewById<EditText>(R.id.etMonthlyGoalSteps)
-        val goal = view.findViewById<TextView>(R.id.tvSavedGoalSteps)
 
-
-
-        bSaveMonthlyGoal.setOnClickListener {
-            if (etMonthlyG.length() == 0){
-                etMonthlyG.error = "You need to enter monthly goal"
+        binding.bSaveMonthlyGoal.setOnClickListener {
+            if (binding.etMonthlyGoalSteps.length() == 0) {
+                binding.etMonthlyGoalSteps.error = "You need to enter monthly goal"
             } else {
-                val monthlyGoal = etMonthlyG.text.toString().toInt()
+                val monthlyGoal = binding.etMonthlyGoalSteps.text.toString().toInt()
                 goalsViewModel.updateMonthly(GoalMonthly(1, monthlyGoal))
-                etMonthlyG.text?.clear()
+                binding.etMonthlyGoalSteps.text?.clear()
                 it.hideKeyboard()
-                barChart.notifyDataSetChanged()
-                returnChart()
-                list.clear()
+                binding.idBarChartMonthly.notifyDataSetChanged()
             }
-
-
-
+            returnChart()
+            list.clear()
         }
-        bGetMSteps.setOnClickListener {
+
+        binding.bCheckMonthlySteps.setOnClickListener {
             gfViewModel.getMonthlyFitnessData(view.context)
                 .observe(viewLifecycleOwner, Observer { MonthlyFitness ->
                     val summedMonthly = MonthlyFitness.monthlyStepsMade.sumOf { it.dailyStepsMade }
                     val ms = getString(R.string.steps_monthly)
-                    textViewSteps.text = String.format(ms, summedMonthly)
-                    val averageMonthly = summedMonthly/30.00
+                    binding.sampleLogview3.text = String.format(ms, summedMonthly)
+                    val averageMonthly = summedMonthly / 30.00
                     val avgMRound = (averageMonthly * 100.0).roundToInt() / 100.0
                     val wa = getString(R.string.avg_monthly)
-                    tvMonthlyAverage.text = String.format(wa, avgMRound)
+                    binding.tvMonthlyAverage.text = String.format(wa, avgMRound)
+                    it.hideKeyboard()
                 })
+
             returnChart()
         }
 
@@ -122,7 +102,6 @@ tvMonthlyAverage = rootView.findViewById(R.id.tvMonthlyAverage)
         goalsViewModel.getMonthly().observe(this) {
             var yGoalW = it.toFloat()
             list.add(BarEntry(1f, yGoalW))
-            barChart.animateY(1000)
         }
 
 
@@ -134,23 +113,22 @@ tvMonthlyAverage = rootView.findViewById(R.id.tvMonthlyAverage)
                     list.add(BarEntry(2f, summedMonthly))
                     val dataSet = BarDataSet(list, "")
                     dataSet.setColors(ColorTemplate.COLORFUL_COLORS, 255)
-                    //dataSet.valueTextColor = Color.BLACK
                     dataSet.valueTextSize = 12f
 
-                    if (isDarkModeOn()){
+                    if (isDarkModeOn()) {
                         dataSet.valueTextColor = Color.WHITE
-                        barChart.description.textColor = Color.WHITE
-                        barChart.xAxis.textColor = Color.WHITE
-                        barChart.axisLeft.textColor = Color.WHITE
+                        binding.idBarChartMonthly.description.textColor = Color.WHITE
+                        binding.idBarChartMonthly.xAxis.textColor = Color.WHITE
+                        binding.idBarChartMonthly.axisLeft.textColor = Color.WHITE
 
                     }
 
                     val barData = BarData(dataSet)
-                    barChart.setFitBars(true)
-                    barChart.data = barData
-                    barChart.description.text = "Monthly goal/steps"
-                    barChart.description.textSize = 12f
-                    barChart.description.yOffset = 500f
+                    binding.idBarChartMonthly.setFitBars(true)
+                    binding.idBarChartMonthly.data = barData
+                    binding.idBarChartMonthly.description.text = "Monthly goal/steps"
+                    binding.idBarChartMonthly.description.textSize = 12f
+                    binding.idBarChartMonthly.description.yOffset = 500f
 
 
                     barData.setValueFormatter(object : ValueFormatter() {
@@ -159,40 +137,38 @@ tvMonthlyAverage = rootView.findViewById(R.id.tvMonthlyAverage)
                         }
                     })
 
-                    barChart.data.notifyDataChanged()
-                    barChart.notifyDataSetChanged()
-                    barChart.animateY(1000)
-                    barChart.legend.isEnabled = false
+                    binding.idBarChartMonthly.data.notifyDataChanged()
+                    binding.idBarChartMonthly.notifyDataSetChanged()
+                    binding.idBarChartMonthly.animateY(1000)
+                    binding.idBarChartMonthly.legend.isEnabled = false
                 })
 
         }
-        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        barChart.axisLeft.axisMinimum = 0f
-        barChart.axisRight.isEnabled = false
-        barChart.axisRight.setDrawGridLines(false)
+        binding.idBarChartMonthly.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        binding.idBarChartMonthly.axisLeft.axisMinimum = 0f
+        binding.idBarChartMonthly.axisRight.isEnabled = false
+        binding.idBarChartMonthly.axisRight.setDrawGridLines(false)
 
         val xAxisLabels = listOf("", "Goals", "Steps")
-        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels)
+        binding.idBarChartMonthly.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels)
 
-        //barChart.xAxis.setCenterAxisLabels(true)
-        barChart.xAxis.setDrawLabels(true)
+        binding.idBarChartMonthly.xAxis.setDrawLabels(true)
 
-       // list.clear()
         return list
     }
+
     fun View.hideKeyboard() {
-        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
+
     fun isDarkModeOn(): Boolean {
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val isDarkModeOn = nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+
         return isDarkModeOn
     }
-
-
-
-
 
 }
 

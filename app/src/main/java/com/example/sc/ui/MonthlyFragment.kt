@@ -71,10 +71,10 @@ class MonthlyFragment : Fragment() {
                 goalsViewModel.updateMonthly(GoalMonthly(1, monthlyGoal))
                 binding.etMonthlyGoalSteps.text?.clear()
                 it.hideKeyboard()
-                binding.idBarChartMonthly.notifyDataSetChanged()
+                returnChart()
+                list.clear()
             }
-            returnChart()
-            list.clear()
+
         }
 
         binding.bCheckMonthlySteps.setOnClickListener {

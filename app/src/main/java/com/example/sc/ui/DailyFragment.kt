@@ -64,6 +64,7 @@ class DailyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val ds = getString(R.string.steps_daily)
+
         binding.bSaveDailyGoal.setOnClickListener { //saves entered daily goal to database
 
             gfViewModel.getDailyFitnessData(view.context)//gets dailysteps from GoogleFit, sets them to textview
@@ -78,9 +79,10 @@ class DailyFragment : Fragment() {
                 goalsViewModel.updateDaily(GoalDaily(1, dailyGoal))
                 binding.etDailyGoalSteps.text?.clear()
                 it.hideKeyboard()
+                returnChart()
+                list.clear()
             }
-            returnChart()
-            list.clear()
+
         }
 
 

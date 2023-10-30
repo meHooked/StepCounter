@@ -70,9 +70,10 @@ class WeeklyFragment : Fragment() {
                 goalsViewModel.updateWeekly(GoalWeekly(1, weeklyGoal))
                 binding.etWeeklyGoalSteps.text.clear()
                 it.hideKeyboard()
+                returnChart()
+                list.clear()
             }
-            returnChart()
-            list.clear()
+
         }
 
         binding.bCheckWeeklySteps.setOnClickListener {
